@@ -29,26 +29,26 @@ export default function RootLayout({
         </header>
         <section>
           <div className="container">
-          <div className="count-box">
-            <div className="modes">
-              <button>Pomodoro</button>
-              <button>Short Break</button>
-              <button>Long Break</button>
+            <div className="count-box">
+              <div className="modes">
+                <button>Pomodoro</button>
+                <button>Short Break</button>
+                <button>Long Break</button>
+              </div>
+              <span className="timer">
+                {metadata.time}
+              </span>
+              <button className='start-btn'>START</button>
             </div>
-            <span className="timer">
-              {metadata.time}
-            </span>
-            <button className='start-btn'>START</button>
-          </div>
-          <div className="tasks-container">
-              <div className="task-header">
-                <span>Tasks</span>
+            <div className="tasks-container">
+              <div className="tasks-header">
+                  <span>Tasks</span>
 
               </div>
-              <div className="task-list">
-  
-              </div>
-          </div>
+            </div>
+            <button className='new-task'>
+              Add Task
+            </button>
           </div>
         </section>
         </div>
