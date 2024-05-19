@@ -28,6 +28,8 @@ export default function RootLayout({
   const [isTimerPaused, setIsTimerPaused] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [timerType, setTimerType] = useState('pomodoro');
+  const [email, setEmail] = useState('');
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
 
   const handleStartClick = () => {
     setIsTimerActive(true);
@@ -90,6 +92,16 @@ export default function RootLayout({
     console.log("New Task Added:", taskName);
   };
 
+  const handleEmailSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Email submitted:", email);
+    setShowRegisterDialog(false);
+  };
+
+  const openRegisterDialog = () => {
+    setShowRegisterDialog(true);
+  };
+
   return (
     <html lang="pt-BR">
       <body>
@@ -100,8 +112,8 @@ export default function RootLayout({
               <ul>
                 <li><a role='button'>Report</a></li>
                 <li><a role='button'>Settings</a></li>
-                <li><a role='button'>Login</a></li>
-                <li><a role='button'>Sign In</a></li>
+                
+                <li><a role='button' onClick={openRegisterDialog}>Sign In</a></li>
               </ul>
             </div>
           </header>
@@ -143,13 +155,13 @@ export default function RootLayout({
               </div>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="add-task-btn">Add Task</Button>
+                  <Button variant="outline" className="add-task-btn">Add a New Task</Button>
                 </DialogTrigger>
                 <DialogContent className="dialog-content-custom">
                   <DialogHeader className="dialog-header-custom">
                     <DialogTitle>Add a New Task</DialogTitle>
                     <DialogDescription>
-                      Diga alguma atividade a ser feita.
+                      Diga alguma atividade a ser feita.  
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleNewTask}>
@@ -164,10 +176,41 @@ export default function RootLayout({
                           className="col-span-3 input-custom"
                           required
                         />
+                        <div className="delete-btn">Delete</div>
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Add Task</Button>
+                      <Button type="submit">Save</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={showRegisterDialog} onOpenChange={setShowRegisterDialog}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Cadastro</DialogTitle>
+                    <DialogDescription>Digite seu email para se cadastrar</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleEmailSubmit}>
+                    <div className="form-grid">
+                      <div className="form-row">
+                        <Label htmlFor="email" className="text-right">
+                          Email
+                        </Label>
+                        <Input 
+                          id="email"
+                          name="email"
+                          type="string"
+                          className="input"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit">Submit</Button>
                     </DialogFooter>
                   </form>
                 </DialogContent>
