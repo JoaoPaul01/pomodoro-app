@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import{
+  SheetClose,
+  SheetFooter,
+} from "@/components/ui/sheet";
 
 export default function RootLayout({
   children,
@@ -30,6 +34,12 @@ export default function RootLayout({
   const [timerType, setTimerType] = useState('pomodoro');
   const [email, setEmail] = useState('');
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+  const [newTaskName, setNewTaskName] = useState('');
+  const [savedTaskName, setSavedTaskName] = useState('');
+  const [taskList, setTaskList] = useState<string[]>([]);
+  const [showTaskBoxes, setShowTaskBoxes] = useState(false);
+  const [editedTaskName, setEditedTaskName] = useState('');
+  const [editedTaskDescription, setEditedTaskDescription] = useState('');
 
   const handleStartClick = () => {
     setIsTimerActive(true);
@@ -89,7 +99,13 @@ export default function RootLayout({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const taskName = formData.get('taskName') as string;
+    const taskDescription = formData.get('taskDescription') as string; // Obter a descrição da tarefa do formulário
+    setNewTaskName(taskName);
+    setSavedTaskName(taskName); // Salvando o novo nome da tarefa na variável
     console.log("New Task Added:", taskName);
+    console.log("Task Description:", taskDescription);
+    setTaskList(prevTaskList => [...prevTaskList, taskName]); // Adicionando a nova tarefa à lista de tarefas
+    setShowTaskBoxes(true); // Mostrando as caixas após salvar a tarefa
   };
 
   const handleEmailSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -101,6 +117,34 @@ export default function RootLayout({
   const openRegisterDialog = () => {
     setShowRegisterDialog(true);
   };
+
+  const handleEditTask = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+  };
+  
+  
+  
+  const handleTaskDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = event.target;
+    setEditedTaskDescription(value); // Atualiza o estado com o valor digitado na descrição
+  };
+  
+// Função para deletar a tarefa
+const handleDeleteTask = (index: number) => {
+  // Removendo a tarefa da lista
+  setTaskList(prevTaskList => prevTaskList.filter((_, i) => i !== index));
+};
+  
+ // Função para cancelar a edição da tarefa
+const handleCancelEdit = () => {
+  // Limpando os dados da tarefa editada
+  setEditedTaskName('');
+  setEditedTaskDescription('');
+};
+  
+
+  
 
   return (
     <html lang="pt-BR">
@@ -141,17 +185,68 @@ export default function RootLayout({
               <div className="tasks-container">
                 <div className="tasks-header">
                   <span>Tasks</span>
-                  <Popover>
-                    <PopoverTrigger>
-                      <div className='action-icon'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+                  
+                </div>
+              </div>
+              <div className="pomofocus-container">
+                {/* Mostrando as caixas de tarefa somente se showTaskBoxes for true */}
+                {showTaskBoxes &&
+                  taskList.map((task, index) => (
+                    <div key={index} className="task-box">
+                      {task}
+                      
+                      
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" className="add-task-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
                           <path fill="currentColor" d="M10 10h4v4h-4zm0-6h4v4h-4zm0 12h4v4h-4z"></path>
                         </svg>
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="dialog-content-custom">
+                            <DialogHeader className="dialog-header-custom">
+                              <DialogTitle>Edit Task</DialogTitle>
+                              <DialogDescription>
+                                Edit the task details here.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleEditTask}>
+                              <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                  <Label htmlFor="taskName" className="text-right">
+                                     Task Name
+                                  </Label>
+                                  
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                  <Label htmlFor="taskDescription" className="text-right">
+                                    Description
+                                  </Label>
+                                  <textarea
+                                    id="taskDescription"
+                                    name="taskDescription"
+                                    value={editedTaskDescription}
+                                    onChange={handleTaskDescriptionChange}
+                                    className="col-span-3 input-custom"
+                                    required
+                                  />
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <SheetFooter>
+                                  <SheetClose>
+                                  <Button type="button" onClick={handleCancelEdit}>Cancel</Button>
+                                </SheetClose>
+                              </SheetFooter>
+                                <Button type="button" onClick={() =>handleDeleteTask(index)}>Delete</Button>
+                                <Button type="submit">Save</Button>
+                              </DialogFooter>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
                       </div>
-                    </PopoverTrigger>
-                    <PopoverContent>Place content for the popover here.</PopoverContent>
-                  </Popover>
-                </div>
+                  ))}
               </div>
               <Dialog>
                 <DialogTrigger asChild>
@@ -168,7 +263,7 @@ export default function RootLayout({
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="taskName" className="text-right">
-                          Task Name
+                          Task Name:
                         </Label>
                         <Input
                           id="taskName"
@@ -176,11 +271,15 @@ export default function RootLayout({
                           className="col-span-3 input-custom"
                           required
                         />
-                        <div className="delete-btn">Delete</div>
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Save</Button>
+                      <SheetFooter>
+                        <SheetClose>
+                        <Button type="button" onClick={handleCancelEdit} className='cancel-btn'>Cancel</Button>
+                          <Button type="submit">Save</Button>
+                        </SheetClose>
+                      </SheetFooter>
                     </DialogFooter>
                   </form>
                 </DialogContent>
