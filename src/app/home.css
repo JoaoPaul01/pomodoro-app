@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: rgb(186, 73, 73);
+    min-height: 100vh;
+    width: 100%;
+    color: white;
+    transition: background-color 0.5s ease-in-out 0s;
+    padding-bottom: 12px;
+    padding: 0;
+    margin: 0;
+    font-family: 'Roboto', 'Arial', sans-serif, serif;
+    
+}
+
+.container {
+    background-color: rgb(186, 73, 73);
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+}
+
+header {
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+}
+
+header .menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 600px;
+    height: 60px;
+    background-color: rgb(186, 73, 73);
+    box-shadow: 0px 1px 2px black;
+    padding: 12px 17px;
+}
+
+.menu ul {
+    text-decoration: none;
+    list-style-type: none;
+
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.menu ul li {
+    cursor: pointer;
+}
+
+section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+section .container {
+    width: 600px;
+}
+
+.count-box {
+    background-color: rgba(255, 255, 255, 0.2);;
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+    padding-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 45px;
+}
+
+.modes {
+    display: flex;
+    font-size: 80px;
+    align-items: center;
+    gap: 45px;
+    cursor: pointer;
+}
+
+.modes button {
+    font-size: 1rem;
+    padding: 3px 5px;
+    border-radius: 7px;
+}
+
+.timer {
+    font-size: 6.25rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px; 
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.start-btn, .pause-btn, .reset-btn {
+   
+    background-color: #ffffff;
+    color: red;
+    font-size: 2rem;
+    padding: 3px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    
+}
+
+.start-btn:hover, .pause-btn:hover, .reset-btn:hover {
+    filter: brightness(0.9); /* Reduz a intensidade da cor ao passar o mouse */
+  }
+
+.next-time-btn:hover {
+    vertical-align: middle;
+    filter: brightness(0.9);
+};
+
+.tasks-container {
+    width: 100%;
+}
+
+.tasks-header {
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 30px;
+    width: 100%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tasks-header .action-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 5px 5px;
+    border-radius: 8px;
+}
+
+
+
+/* Estilos para o botão Add Task */
+.add-task-btn {
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  
+  /* Estilos para o conteúdo do diálogo */
+  .dialog-content-custom {
+    background-color: #f9f9f9; /* Cor de fundo */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos para os cabeçalhos do diálogo */
+  .dialog-header-custom {
+    
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilos para os inputs */
+  .input-custom {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #000000; /* Cor do texto */
+    background-color: #ffffff; /* Cor de fundo */
+  }
+  
+  /* Garantindo que o texto seja visível dentro dos inputs */
+  .input-custom::placeholder {
+    color: #888; /* Cor do placeholder */
+  }
+  
