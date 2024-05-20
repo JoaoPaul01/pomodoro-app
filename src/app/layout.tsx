@@ -333,6 +333,7 @@ export default function RootLayout({
                         </Label>
                         <Input
                           id="taskName"
+                          type='text'
                           name="taskName"
                           className="col-span-3 input-custom"
                           required
@@ -342,6 +343,7 @@ export default function RootLayout({
                         </Label>
                         <Input
                           id="description"
+                          type='text'
                           name="description"
                           className="col-span-3 input-custom"
                           required
@@ -351,6 +353,7 @@ export default function RootLayout({
                         </Label>
                         <Input
                           id="turns"
+                          type='number'
                           name="turns"
                           className="col-span-3 input-custom"
                           required
