@@ -32,7 +32,8 @@ async function getTasks() {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    withCredentials: true
+    withCredentials: false,
+    baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
   })
   .then(response => {
     console.log(response.data)
