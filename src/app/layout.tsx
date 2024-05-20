@@ -108,12 +108,11 @@ export default function RootLayout({
   };
 
   const convertTasks = (data: any[]): Task[] => {
-    // Assumindo que a resposta da API é um array de objetos com os campos necessários
     return data.map((task) => ({
       id: task.id,
       name: task.name, 
       description: task.description,
-      turn: Number(task.turn), 
+      turn: task.turn, 
       status: task.status
     }));
   };
@@ -123,7 +122,7 @@ export default function RootLayout({
     const formData = new FormData(event.currentTarget);
     const taskName = formData.get('taskName') as string;
     const taskDescription = formData.get('description') as string; 
-    const taskTurns = formData.get('turns') as string; 
+    const taskTurns = formData.get('turns') as unknown as number; 
     createTask({
       name: taskName,
       description: taskDescription,
