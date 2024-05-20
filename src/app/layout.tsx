@@ -184,7 +184,7 @@ export default function RootLayout({
   };
   
   const handleDeleteTask = async (index: number) => {
-    await axios.post(`https://pomodoro-app-backend-production.up.railway.app/v1/delete-task/${index}`)
+    await axios.delete(`https://pomodoro-app-backend-production.up.railway.app/v1/delete-task/${index}`)
       .then(response => {
         setTaskList(convertTasks(response.data)); 
       })
