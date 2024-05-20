@@ -126,7 +126,7 @@ export default function RootLayout({
     createTask({
       name: taskName,
       description: taskDescription,
-      turn: taskTurns
+      turn: Number(taskTurns)
     });
     
   };
