@@ -27,7 +27,13 @@ import{
 import axios from 'axios';
 
 async function getTasks() {
-  await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/')
+  await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    withCredentials: true
+  })
   .then(response => {
     console.log(response.data)
   })
