@@ -88,8 +88,11 @@ export default function RootLayout({
       default:
         setTimerType('pomodoro');
     }
-    setResetKey(prevKey => prevKey + 1);
-  };
+    setIsTimerActive(false); 
+    setIsTimerPaused(true); 
+    
+    setResetKey(0);
+  };
 
   const getInitialTime = () => {
     switch (timerType) {
