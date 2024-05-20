@@ -27,7 +27,7 @@ import{
 import axios from 'axios';
 
 type Task = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   turn: number;
@@ -142,8 +142,16 @@ export default function RootLayout({
   };
 
   const handleEditTask = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+    event.preventDefault(); 
+    const formData = new FormData(event.currentTarget);
+    const taskName = formData.get('taskName') as string;
+    const taskDescription = formData.get('description') as string; 
+    const taskTurns = formData.get('turns') as unknown as number; 
+    createTask({
+      name: taskName,
+      description: taskDescription,
+      turn: Number(taskTurns)
+    });
   };
 
   async function createTask(body: any) {
@@ -296,7 +304,7 @@ export default function RootLayout({
                                   <Button type="button" onClick={handleCancelEdit}>Cancel</Button>
                                 </SheetClose>
                               </SheetFooter>
-                              <Button type="button" onClick={() => handleDeleteTask(index)}>Delete</Button>
+                              <Button type="button" onClick={() => handleDeleteTask(task.id)}>Delete</Button>
                               <Button type="submit">Save</Button>
                             </DialogFooter>
                           </form>
