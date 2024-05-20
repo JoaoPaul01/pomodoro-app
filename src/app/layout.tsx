@@ -113,7 +113,7 @@ export default function RootLayout({
       id: task.id,
       name: task.name, 
       description: task.description,
-      turn: task.turn, 
+      turn: Number(task.turn), 
       status: task.status
     }));
   };
