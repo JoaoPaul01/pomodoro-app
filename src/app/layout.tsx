@@ -155,7 +155,6 @@ export default function RootLayout({
 
         },
         withCredentials: false,
-        baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
       })
       .then(response => {
         setTaskList(convertTasks(response.data)); 
@@ -173,7 +172,6 @@ export default function RootLayout({
           'Accept': 'application/json',
         },
         withCredentials: false,
-        baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
       })
       .then(response => {
         setTaskList(convertTasks(response.data)); 
