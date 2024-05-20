@@ -30,7 +30,7 @@ type Task = {
   id: string;
   name: string;
   description: string;
-  turn: string;
+  turn: number;
   status: string;
 };
 
