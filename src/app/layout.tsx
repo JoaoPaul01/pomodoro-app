@@ -24,6 +24,19 @@ import{
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
+import axios from 'axios';
+
+async function getTasks() {
+  await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/')
+  .then(response => {
+    console.log(response.data)
+  })
+  .catch(error => {
+    console.log(error)
+  })
+}
+
+getTasks();
 
 export default function RootLayout({
   children,
