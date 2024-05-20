@@ -147,14 +147,7 @@ export default function RootLayout({
   };
 
   async function createTask(body: any) {
-    await axios.post('https://pomodoro-app-backend-production.up.railway.app/v1/task', body,{
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-
-        },
-        withCredentials: false,
-      })
+    await axios.post('https://pomodoro-app-backend-production.up.railway.app/v1/task', body)
       .then(response => {
         setTaskList(convertTasks(response.data)); 
       })
@@ -165,13 +158,7 @@ export default function RootLayout({
   
   useEffect(() => {
     const getTasks = async () => {
-      await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        withCredentials: false,
-      })
+      await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/')
       .then(response => {
         setTaskList(convertTasks(response.data)); 
       })
@@ -188,9 +175,14 @@ export default function RootLayout({
     setEditedTaskDescription(value); 
   };
   
-  const handleDeleteTask = (index: number) => {
-    // Removendo a tarefa da lista
-    setTaskList(prevTaskList => prevTaskList.filter((_, i) => i !== index));
+  const handleDeleteTask = async (index: number) => {
+    await axios.post(`https://pomodoro-app-backend-production.up.railway.app/v1/delete-task/${index}`)
+      .then(response => {
+        setTaskList(convertTasks(response.data)); 
+      })
+      .catch(error => {
+        console.log(error)
+      })
   };
   
  // Função para cancelar a edição da tarefa
