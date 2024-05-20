@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './globals.css';
 import './home.css';
 import {
@@ -26,24 +26,13 @@ import{
 } from "@/components/ui/sheet";
 import axios from 'axios';
 
-async function getTasks() {
-  await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/', {
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    withCredentials: false,
-    baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
-  })
-  .then(response => {
-    console.log(response.data)
-  })
-  .catch(error => {
-    console.log(error)
-  })
-}
-
-getTasks();
+type Task = {
+  id: string;
+  name: string;
+  description: string;
+  turn: string;
+  status: string;
+};
 
 export default function RootLayout({
   children,
@@ -56,7 +45,7 @@ export default function RootLayout({
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [newTaskName, setNewTaskName] = useState('');
   const [savedTaskName, setSavedTaskName] = useState('');
-  const [taskList, setTaskList] = useState<string[]>([]);
+  const [taskList, setTaskList] = useState<Task[]>([]);
   const [showTaskBoxes, setShowTaskBoxes] = useState(false);
   const [editedTaskName, setEditedTaskName] = useState('');
   const [editedTaskDescription, setEditedTaskDescription] = useState('');
@@ -83,7 +72,7 @@ export default function RootLayout({
   const handleLongBreakClick = () => {
     setTimerType('long-break');
     setResetKey(prevKey => prevKey + 1);
-  };
+  };  
 
   const handleNextTimerClick = () => {
     switch (timerType) {
@@ -115,17 +104,29 @@ export default function RootLayout({
     }
   };
 
+  const convertTasks = (data: any[]): Task[] => {
+    // Assumindo que a resposta da API é um array de objetos com os campos necessários
+    return data.map((task) => ({
+      id: task.id,
+      name: task.name, 
+      description: task.description,
+      turn: task.turn, 
+      status: task.status
+    }));
+  };
+
   const handleNewTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const taskName = formData.get('taskName') as string;
-    const taskDescription = formData.get('taskDescription') as string; // Obter a descrição da tarefa do formulário
-    setNewTaskName(taskName);
-    setSavedTaskName(taskName); // Salvando o novo nome da tarefa na variável
-    console.log("New Task Added:", taskName);
-    console.log("Task Description:", taskDescription);
-    setTaskList(prevTaskList => [...prevTaskList, taskName]); // Adicionando a nova tarefa à lista de tarefas
-    setShowTaskBoxes(true); // Mostrando as caixas após salvar a tarefa
+    const taskDescription = formData.get('description') as string; 
+    const taskTurns = formData.get('turns') as string; 
+    createTask({
+      name: taskName,
+      description: taskDescription,
+      turn: taskTurns
+    });
+    
   };
 
   const handleEmailSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -142,26 +143,62 @@ export default function RootLayout({
     event.preventDefault();
 
   };
+
+  async function createTask(body: any) {
+    await axios.post('https://pomodoro-app-backend-production.up.railway.app/v1/task', body,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+
+        },
+        withCredentials: false,
+        baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
+      })
+      .then(response => {
+        setTaskList(convertTasks(response.data)); 
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
   
-  
+  useEffect(() => {
+    const getTasks = async () => {
+      await axios.get('https://pomodoro-app-backend-production.up.railway.app/v1/tasks-list/', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        withCredentials: false,
+        baseURL: 'https://pomodoro-app-backend-production.up.railway.app:8000'
+      })
+      .then(response => {
+        setTaskList(convertTasks(response.data)); 
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    };
+
+    getTasks(); 
+  }, []);
   
   const handleTaskDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
-    setEditedTaskDescription(value); // Atualiza o estado com o valor digitado na descrição
+    setEditedTaskDescription(value); 
   };
   
-// Função para deletar a tarefa
-const handleDeleteTask = (index: number) => {
-  // Removendo a tarefa da lista
-  setTaskList(prevTaskList => prevTaskList.filter((_, i) => i !== index));
-};
+  const handleDeleteTask = (index: number) => {
+    // Removendo a tarefa da lista
+    setTaskList(prevTaskList => prevTaskList.filter((_, i) => i !== index));
+  };
   
  // Função para cancelar a edição da tarefa
-const handleCancelEdit = () => {
-  // Limpando os dados da tarefa editada
-  setEditedTaskName('');
-  setEditedTaskDescription('');
-};
+  const handleCancelEdit = () => {
+    // Limpando os dados da tarefa editada
+    setEditedTaskName('');
+    setEditedTaskDescription('');
+  };
   
 
   
@@ -209,63 +246,71 @@ const handleCancelEdit = () => {
                 </div>
               </div>
               <div className="pomofocus-container">
-                {/* Mostrando as caixas de tarefa somente se showTaskBoxes for true */}
-                {showTaskBoxes &&
-                  taskList.map((task, index) => (
+                {taskList.map((task, index) => (
                     <div key={index} className="task-box">
-                      {task}
+                      <div className="task-name">{task.name}</div>
                       
-                      
-                        <Dialog>
-                          <DialogTrigger asChild>
+
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <div className='last-item'>
+                            <div className="task-turn">{task.turn}/4</div>
                             <Button variant="outline" className="add-task-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M10 10h4v4h-4zm0-6h4v4h-4zm0 12h4v4h-4z"></path>
-                        </svg>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M10 10h4v4h-4zm0-6h4v4h-4zm0 12h4v4h-4z"></path>
+                              </svg>
                             </Button>
-                          </DialogTrigger>
-                          <DialogContent className="dialog-content-custom">
-                            <DialogHeader className="dialog-header-custom">
-                              <DialogTitle>Edit Task</DialogTitle>
-                              <DialogDescription>
-                                Edit the task details here.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <form onSubmit={handleEditTask}>
-                              <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="taskName" className="text-right">
-                                     Task Name
-                                  </Label>
-                                  
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="taskDescription" className="text-right">
-                                    Description
-                                  </Label>
-                                  <textarea
-                                    id="taskDescription"
-                                    name="taskDescription"
-                                    value={editedTaskDescription}
-                                    onChange={handleTaskDescriptionChange}
-                                    className="col-span-3 input-custom"
-                                    required
-                                  />
-                                </div>
+                          </div>
+                        </DialogTrigger>
+                        <DialogContent className="dialog-content-custom">
+                          <DialogHeader className="dialog-header-custom">
+                            <DialogTitle>Edit Task</DialogTitle>
+                            <DialogDescription>
+                              Edit the task details here.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handleEditTask}>
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="taskName" className="text-right">
+                                  Task Name
+                                </Label>
+                                <Input
+                                  id="taskName"
+                                  name="taskName"
+                                  className="col-span-3 input-custom"
+                                  value={task.name} // Use o valor atual da tarefa
+                                  onChange={(e) => setEditedTaskName(e.target.value)} 
+                                  required
+                                />
                               </div>
-                              <DialogFooter>
-                                <SheetFooter>
-                                  <SheetClose>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="taskDescription" className="text-right">
+                                  Description
+                                </Label>
+                                <textarea
+                                  id="taskDescription"
+                                  name="taskDescription"
+                                  value={task.description} // Use o valor atual da tarefa
+                                  onChange={handleTaskDescriptionChange}
+                                  className="col-span-3 input-custom"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              <SheetFooter>
+                                <SheetClose>
                                   <Button type="button" onClick={handleCancelEdit}>Cancel</Button>
                                 </SheetClose>
                               </SheetFooter>
-                                <Button type="button" onClick={() =>handleDeleteTask(index)}>Delete</Button>
-                                <Button type="submit">Save</Button>
-                              </DialogFooter>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
+                              <Button type="button" onClick={() => handleDeleteTask(index)}>Delete</Button>
+                              <Button type="submit">Save</Button>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   ))}
               </div>
               <Dialog>
@@ -283,11 +328,29 @@ const handleCancelEdit = () => {
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="taskName" className="text-right">
-                          Task Name:
+                          Nome da atividade:
                         </Label>
                         <Input
                           id="taskName"
                           name="taskName"
+                          className="col-span-3 input-custom"
+                          required
+                        />
+                        <Label htmlFor="description" className="text-right">
+                          Descrição:
+                        </Label>
+                        <Input
+                          id="description"
+                          name="description"
+                          className="col-span-3 input-custom"
+                          required
+                        />
+                        <Label htmlFor="turns" className="text-right">
+                          Quantidade de turnos:
+                        </Label>
+                        <Input
+                          id="turns"
+                          name="turns"
                           className="col-span-3 input-custom"
                           required
                         />

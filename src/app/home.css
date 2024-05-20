@@ -239,6 +239,12 @@ section .container {
     font-size: 1.4rem;
 }
 
+.last-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 .cancel-btn {
     margin-right: 10px;
     
